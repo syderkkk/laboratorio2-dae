@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Task
@@ -60,3 +61,23 @@ def task_delete(request, pk):
         return redirect('task_list')
     
     return render(request, 'tasks/task_confirm_delete.html', {'task': task})
+
+
+# Endpoint
+def all_tasks(request):
+    tasks = Task.objects.all()
+
+    tasks_data = [
+        {
+            'title': task.title,
+            'description': task.description,
+            'created_at': task.created_date,
+            'due_date': task.due_date,
+            'priority': task.priority,
+            'status': task.status,
+            
+        }
+        for task in tasks
+    ]
+    
+    return JsonResponse({'tasks': tasks_data})
